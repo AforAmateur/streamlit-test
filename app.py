@@ -1,19 +1,29 @@
-import streamlit as st
 import os
+import sys
 from pathlib import Path
+
+# Set up environment variables before any other imports
+os.environ["DEEPSEARCH_GLM_HOME"] = "/tmp/deepsearch_glm"
+os.environ["DOCLING_MODEL_PATH"] = "/tmp/docling_models"
+
+# Create necessary directories with full permissions
+for path in ["/tmp/deepsearch_glm", "/tmp/docling_models", "/tmp/uploads"]:
+    os.makedirs(path, mode=0o777, exist_ok=True)
+
+import streamlit as st
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling.pipeline.standard_pdf_pipeline import StandardPdfPipeline
 
-# Create a local directory for models and uploads in a writable location
-local_dir = Path("./local_models")  # or Path("/tmp/local_models")
-local_dir.mkdir(parents=True, exist_ok=True)
+# Use tmp directory for everything
+local_dir = Path("/tmp/docling_models")
+uploads_dir = Path("/tmp/uploads")
 
-# First download models to the local directory
+# Download models to the temporary directory
 artifacts_path = StandardPdfPipeline.download_models_hf(local_dir)
 
-# Set up the converter with the local path
+# Configure the converter
 pipeline_options = PdfPipelineOptions(artifacts_path=str(local_dir))
 converter = DocumentConverter(
     format_options={
@@ -26,7 +36,6 @@ st.set_page_config(
     page_title="Test App"
 )
 
-# Custom CSS
 css = '''
 <style>
     [data-testid="stMainBlockContainer"] {
@@ -54,25 +63,28 @@ with t3:
             if input_url:
                 source = input_url 
             else:
-                # Using the same local_dir for uploaded files
-                file_path = os.path.join(local_dir, uploaded_file.name)                
+                # Save uploaded file to tmp directory
+                file_path = uploads_dir / uploaded_file.name
                 with open(file_path, "wb") as f:
                     f.write(uploaded_file.getbuffer())                 
-                source = str(local_dir / uploaded_file.name)
+                source = str(file_path)
             
-            result = converter.convert(source)
-            
-            o1,o2,o3 = st.tabs(
-                [":material/info: Text", ":material/apps: JSON", ":material/play_arrow: Token"])
-            
-            with o1:
-                st.text_area("Output", result.document.export_to_markdown(), height=800)
-            
-            with o2:
-                data = result.document.export_to_dict()
-                if "schema_name" in data and data["schema_name"] == "DoclingDocument":
-                    data["schema_name"] = "StructurifyDocument"
-                st.json(data)
-            
-            with o3:
-                st.text_area("Output", result.document.export_to_document_tokens(), height=800)
+            try:
+                result = converter.convert(source)
+                
+                o1,o2,o3 = st.tabs(
+                    [":material/info: Text", ":material/apps: JSON", ":material/play_arrow: Token"])
+                
+                with o1:
+                    st.text_area("Output", result.document.export_to_markdown(), height=800)
+                
+                with o2:
+                    data = result.document.export_to_dict()
+                    if "schema_name" in data and data["schema_name"] == "DoclingDocument":
+                        data["schema_name"] = "StructurifyDocument"
+                    st.json(data)
+                
+                with o3:
+                    st.text_area("Output", result.document.export_to_document_tokens(), height=800)
+            except Exception as e:
+                st.error(f"Error processing document: {str(e)}")
