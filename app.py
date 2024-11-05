@@ -6,8 +6,8 @@ from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling.pipeline.standard_pdf_pipeline import StandardPdfPipeline
 
-# Create a local directory for models in a writable location
-local_dir = Path("./local_models")  # Using current directory
+# Create a local directory for models and uploads in a writable location
+local_dir = Path("./local_models")  # or Path("/tmp/local_models")
 local_dir.mkdir(parents=True, exist_ok=True)
 
 # First download models to the local directory
@@ -39,11 +39,6 @@ css = '''
 '''
 st.markdown(css, unsafe_allow_html=True)
 
-# Directory where PDF files will be saved
-SAVE_DIR = "static"
-if not os.path.exists(SAVE_DIR):
-    os.makedirs(SAVE_DIR)
-
 st.subheader(":rainbow[Test]")
 t1,t2,t3 = st.tabs(
     [":material/info: Sign-Up", ":material/info: About", ":material/play_arrow: Playground"])
@@ -59,10 +54,11 @@ with t3:
             if input_url:
                 source = input_url 
             else:
-                file_path = os.path.join(SAVE_DIR, uploaded_file.name)                
+                # Using the same local_dir for uploaded files
+                file_path = os.path.join(local_dir, uploaded_file.name)                
                 with open(file_path, "wb") as f:
                     f.write(uploaded_file.getbuffer())                 
-                source = f"{SAVE_DIR}/{uploaded_file.name}"   
+                source = str(local_dir / uploaded_file.name)
             
             result = converter.convert(source)
             
