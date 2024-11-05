@@ -57,7 +57,7 @@ with t3:
                 source = f"{SAVE_DIR}/{uploaded_file.name}"   
                 # source = uploaded_file
             converter = DocumentConverter()
-            result = converter.convert(source)
+            result = converter.convert(source, model_path='/tmp/docling_models')
             # st.json(result.document.export_to_dict())
             o1,o2,o3 = st.tabs(
                         [":material/info: Text", ":material/apps: JSON", ":material/play_arrow: Token"])
