@@ -73,6 +73,7 @@ with t3:
                 except Exception as e:
                     st.write(e)
                     print(e)
+                    result = None
                 
                 o1,o2,o3 = st.tabs(
                     [":material/info: Text", ":material/apps: JSON", ":material/play_arrow: Token"])
