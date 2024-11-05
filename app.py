@@ -67,8 +67,11 @@ with t3:
                     with open(file_path, "wb") as f:
                         f.write(uploaded_file.getbuffer())                 
                     source = str(file_path)                  
-                    print(source)
-                result = converter.convert(source)
+                print(source)
+                try:
+                    result = converter.convert(source)
+                except Exception as e:
+                    print(e)
                 
                 o1,o2,o3 = st.tabs(
                     [":material/info: Text", ":material/apps: JSON", ":material/play_arrow: Token"])
