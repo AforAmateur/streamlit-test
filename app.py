@@ -11,7 +11,7 @@ uploads_dir = tmp_base / "uploads"
 uploads_dir.mkdir(parents=True, exist_ok=True)
 
 # Try to force deepsearch_glm to use our directory
-# os.environ["DEEPSEARCH_GLM_HOME"] = str(models_dir)
+os.environ["DEEPSEARCH_GLM_HOME"] = str(models_dir)
 os.environ["DOCLING_MODEL_PATH"] = str(models_dir)
 
 # Now import the required packages
