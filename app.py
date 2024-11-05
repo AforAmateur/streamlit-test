@@ -11,16 +11,8 @@ uploads_dir = tmp_base / "uploads"
 uploads_dir.mkdir(parents=True, exist_ok=True)
 
 # Try to force deepsearch_glm to use our directory
-os.environ["DEEPSEARCH_GLM_HOME"] = str(models_dir)
+# os.environ["DEEPSEARCH_GLM_HOME"] = str(models_dir)
 os.environ["DOCLING_MODEL_PATH"] = str(models_dir)
-
-# Attempt to modify Python path to redirect package resources
-import site
-site_packages = site.getsitepackages()[0]
-deepsearch_path = Path(site_packages) / "deepsearch_glm/resources/models"
-if deepsearch_path.exists():
-    # Create symbolic link to our writable directory
-    os.system(f"ln -sf {models_dir} {deepsearch_path}")
 
 # Now import the required packages
 import streamlit as st
@@ -69,13 +61,13 @@ with t3:
             try:
                 if input_url:
                     source = input_url 
-                else:
+                else:                    
                     # Save uploaded file to tmp directory
                     file_path = uploads_dir / uploaded_file.name
                     with open(file_path, "wb") as f:
                         f.write(uploaded_file.getbuffer())                 
-                    source = str(file_path)
-                
+                    source = str(file_path)                  
+                    print(source)
                 result = converter.convert(source)
                 
                 o1,o2,o3 = st.tabs(
