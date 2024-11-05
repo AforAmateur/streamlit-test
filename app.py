@@ -71,6 +71,7 @@ with t3:
                 try:
                     result = converter.convert(source)
                 except Exception as e:
+                    st.write(e)
                     print(e)
                 
                 o1,o2,o3 = st.tabs(
