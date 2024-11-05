@@ -27,6 +27,15 @@ SAVE_DIR = "static"
 if not os.path.exists(SAVE_DIR):
     os.makedirs(SAVE_DIR)
 
+# local_dir = Path("/mount/src/streamlit-test/models")  # Or any other write-accessible location
+# local_dir.mkdir(parents=True, exist_ok=True)
+
+os.environ['DOCLING_MODEL_PATH'] = '/tmp/docling_models'  # /tmp is usually writable
+# Create models directory in current working directory
+models_dir = os.path.join(os.getcwd(), 'models')
+os.makedirs(models_dir, exist_ok=True)
+os.environ['DOCLING_MODEL_PATH'] = models_dir
+
 st.subheader(":rainbow[Test]")
 t1,t2,t3 = st.tabs(
     [":material/info: Sign-Up", ":material/info: About", ":material/play_arrow: Playground"])
