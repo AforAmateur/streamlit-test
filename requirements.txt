@@ -1,1 +1,3 @@
-docling
+pymupdf 
+langchain
+langchain-community
