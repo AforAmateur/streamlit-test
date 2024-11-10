@@ -2,3 +2,4 @@ pymupdf
 langchain
 langchain-community
 langchain_openai
+pymupdf4llm
