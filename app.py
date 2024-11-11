@@ -1,6 +1,8 @@
 import streamlit as st
 from langchain_community.document_loaders import PyMuPDFLoader
 import tempfile
+import pymupdf4llm
+
 
 
 
@@ -16,4 +18,6 @@ if uploaded_file is not None:
     docs = loader.load()
 
     # Display the content of the first document
-    st.write(docs[0])
+    # st.write(docs[0])
+    st.write(pymupdf4llm.to_markdown(temp_file_path))
+    
